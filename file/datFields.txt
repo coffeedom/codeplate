@@ -1,0 +1,4 @@
+a
+a	bb
+a	bb	ccc
+x0	x1

@@ -1,4 +1,6 @@
 codeplate
 =========
 
-code templates
+code templates (private use only)
+
+(END)
