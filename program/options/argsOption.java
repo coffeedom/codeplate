@@ -63,19 +63,19 @@ public class argsOption
         catch (UnrecognizedOptionException e)
         {
             System.out.println("(error0): " + e.toString());
-            formatter.printHelp( "help", options );
+            formatter.printHelp( "prog.", options );
             System.exit(0);
         }
         catch (MissingArgumentException e)
         {
             System.out.println("(error1): " + e.toString());
-            formatter.printHelp( "help", options );
+            formatter.printHelp( "prog.", options );
             System.exit(0);
         }
         catch (ParseException e)
         {
             System.out.println("(error2): " + e.toString());
-            formatter.printHelp( "help", options );
+            formatter.printHelp( "prog.", options );
             System.exit(0);
         }
         finally
@@ -99,6 +99,13 @@ public class argsOption
             System.out.println("option 'output' is given");
             System.out.println("val = " + cmd.getOptionValue("o"));
             System.out.println("val = " + cmd.getOptionValue("output"));
+        }
+        if (cmd.hasOption("inputs"))
+        {
+            System.out.println("option 'inputs' is given");
+            for (int i=0; i < cmd.getOptionValues("i").length; i++) {
+                System.out.println("val = " + cmd.getOptionValues("i")[i]);
+            }
         }
 
         System.out.println("(info.): end of test program");
