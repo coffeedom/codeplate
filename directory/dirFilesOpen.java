@@ -1,10 +1,105 @@
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class dirFilesOpen
 {
+    private void procFile(String file)
+    {
+        try
+        {
+            File              fin = new File(file);
+            FileInputStream   fis = new FileInputStream(fin);
+            InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+            BufferedReader    fbr = new BufferedReader(isr);
+
+            System.out.println("===== process: " + fin.getName() + " ======");
+
+            String str = null;
+
+            while ((str = fbr.readLine()) != null)
+            {
+                System.out.println(str);
+            }
+            fbr.close();
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+    private boolean matchExtension(String file, String ext)
+    {
+        if (ext == null) return true;
+
+        int idx = file.lastIndexOf('.');
+
+        if (idx == -1)  // the file name does not have ".". 
+        {
+            if (ext.length() == 0)
+                return true;
+            else
+                return false;
+        }
+
+        // the file name has ".".
+
+        if ( ext.compareTo(".") != 0 )
+            ext = "." + ext;    // use sb.
+
+        if ( ext.compareTo(file.substring(idx)) == 0)
+            return true;
+
+        return false;
+    } 
+
+    private List<String> createFileList(String dirname, String extensn)
+    {
+        List<String> fileList = new ArrayList<String>();
+
+        File dire = new File(dirname);
+
+        for (File file : dire.listFiles())
+        {
+            if (file.isDirectory())
+            {
+                continue;
+            }
+            else
+            {
+                if (matchExtension(file.getName(), extensn))
+                    fileList.add(dirname + "/" + file.getName());
+            }
+        }
+        // System.out.println(fileList);
+        Collections.sort(fileList);
+        return fileList;
+    }
+
+
+
+
     public static void main(String args[])
     {
         CommandLineParser parser = new GnuParser();
@@ -27,12 +122,12 @@ public class dirFilesOpen
         Option help = new Option( "h", "help", false, "print this message" );
         options.addOption( help );
 
-	// Help Message
+        // Help Message
         HelpFormatter formatter = new HelpFormatter();
 
 
         //----------------------------------------------------
-	// STEP 4. - Parse arguments
+        // Parse arguments
         //----------------------------------------------------
 
         CommandLine cmd = null;
@@ -66,9 +161,9 @@ public class dirFilesOpen
 
 
         //----------------------------------------------------
-        // STEP 5. - Check options are given or not
+        // Get option flag or values
         //----------------------------------------------------
-
+/*
         if (cmd.hasOption("d"))
             System.out.println("option 'd' is given");
         if (cmd.hasOption("e"))
@@ -84,9 +179,30 @@ public class dirFilesOpen
             System.out.println("option 'extension' is given");
             System.out.println("val = " + cmd.getOptionValue("extension"));
         }
+*/
 
-        System.out.println("(info.): end of test program");
+        String dirname = cmd.getOptionValue("directory");
+        String extensn = cmd.getOptionValue("extension");
+
+
+        //---------------------------------------------------
+        // Main Processes
+        //---------------------------------------------------
+
+        if (dirname == null)
+            dirname = ".";
+
+        dirFilesOpen dfo = new dirFilesOpen();
+        List<String> fileList = dfo.createFileList(dirname, extensn);
+
+        for (String file : fileList)
+        {
+            dfo.procFile(file);
+        }
+
+        System.out.println("\n\n(info.): end of test program");
         return;
     }
 }
 
+// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
